@@ -1,4 +1,4 @@
-package com.github.binz.tools.autoupdatetable.model;
+package com.github.gonglb.tools.autoupdatetable.model;
 
 public class CreateTableParam {
 	/**

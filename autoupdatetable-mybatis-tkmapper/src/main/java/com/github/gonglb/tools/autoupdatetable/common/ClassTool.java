@@ -1,4 +1,4 @@
-package com.github.binz.tools.autoupdatetable.common;
+package com.github.gonglb.tools.autoupdatetable.common;
 
 import java.io.File;
 import java.io.FileFilter;

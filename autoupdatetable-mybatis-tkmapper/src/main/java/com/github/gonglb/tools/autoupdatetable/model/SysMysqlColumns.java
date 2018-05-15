@@ -1,4 +1,4 @@
-package com.github.binz.tools.autoupdatetable.model;
+package com.github.gonglb.tools.autoupdatetable.model;
 
 import javax.persistence.Table;
 

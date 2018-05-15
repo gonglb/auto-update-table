@@ -1,11 +1,11 @@
-package com.github.binz.tools.autoupdatetable.mapper;
+package com.github.gonglb.tools.autoupdatetable.mapper;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.github.binz.tools.autoupdatetable.model.SysMysqlColumns;
+import com.github.gonglb.tools.autoupdatetable.model.SysMysqlColumns;
 
 import tk.mybatis.mapper.common.Mapper;
 

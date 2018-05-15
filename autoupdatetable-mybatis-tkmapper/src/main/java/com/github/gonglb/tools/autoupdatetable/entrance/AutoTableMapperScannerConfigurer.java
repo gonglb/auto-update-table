@@ -1,4 +1,4 @@
-package com.github.binz.tools.autoupdatetable.entrance;
+package com.github.gonglb.tools.autoupdatetable.entrance;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -6,14 +6,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import com.github.binz.tools.autoupdatetable.mapper.CreateMysqlTablesMapper;
+import com.github.gonglb.tools.autoupdatetable.mapper.CreateMysqlTablesMapper;
 
 /**
- * 基于tkmapper管理
+ * 基于mybatis管理
  * @author gonglb
- * 2018年5月10日 上午9:44:44
+ * 2018年5月10日 上午9:45:00
  */
-public class AutoTableTKMapperScannerConfigurer extends tk.mybatis.spring.mapper.MapperScannerConfigurer implements ApplicationContextAware,ApplicationListener<ContextRefreshedEvent> {
+public class AutoTableMapperScannerConfigurer extends org.mybatis.spring.mapper.MapperScannerConfigurer implements ApplicationContextAware,ApplicationListener<ContextRefreshedEvent> {
 
 	private AutoTableHandle autoTableHandle;
 
@@ -65,12 +65,6 @@ public class AutoTableTKMapperScannerConfigurer extends tk.mybatis.spring.mapper
 
 	public void setTableAuto(String tableAuto) {
 		this.tableAuto = tableAuto;
-	}
-	
-	@Override
-	public void setBasePackage(String basePackage) {
-		basePackage+=",com.binz.tools.com.binz.tools.autoupdatetable.mapper";
-		super.setBasePackage(basePackage);
 	}
 
 }

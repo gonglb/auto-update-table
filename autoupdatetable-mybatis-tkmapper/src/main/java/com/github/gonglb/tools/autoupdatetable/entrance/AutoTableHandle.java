@@ -1,4 +1,4 @@
-package com.github.binz.tools.autoupdatetable.entrance;
+package com.github.gonglb.tools.autoupdatetable.entrance;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,11 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.binz.tools.autoupdatetable.common.ClassTool;
-import com.github.binz.tools.autoupdatetable.common.ColumnType;
-import com.github.binz.tools.autoupdatetable.mapper.CreateMysqlTablesMapper;
-import com.github.binz.tools.autoupdatetable.model.CreateTableParam;
-import com.github.binz.tools.autoupdatetable.model.SysMysqlColumns;
+import com.github.gonglb.tools.autoupdatetable.common.ClassTool;
+import com.github.gonglb.tools.autoupdatetable.common.ColumnType;
+import com.github.gonglb.tools.autoupdatetable.mapper.CreateMysqlTablesMapper;
+import com.github.gonglb.tools.autoupdatetable.model.CreateTableParam;
+import com.github.gonglb.tools.autoupdatetable.model.SysMysqlColumns;
 
 
 public class AutoTableHandle {

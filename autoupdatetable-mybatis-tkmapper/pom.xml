@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.binz.tools</groupId>
-	<artifactId>com.github.binz.tools.autoupdatetable</artifactId>
+	<groupId>com.github.gonglb.tools</groupId>
+	<artifactId>com.github.gonglb.tools.autoupdatetable</artifactId>
 	<version>0.0.1</version>
 	<packaging>jar</packaging>
 

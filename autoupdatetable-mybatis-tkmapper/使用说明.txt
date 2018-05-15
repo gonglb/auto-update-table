@@ -123,7 +123,7 @@ public class Test{
 
 
 <dependency>
-	<groupId>com.github.binz.tools</groupId>
-	<artifactId>com.github.binz.tools.autoupdatetable</artifactId>
+	<groupId>com.github.gonglb.tools</groupId>
+	<artifactId>com.github.gonglb.tools.autoupdatetable</artifactId>
 	<version>0.0.1</version>
 </dependency>
