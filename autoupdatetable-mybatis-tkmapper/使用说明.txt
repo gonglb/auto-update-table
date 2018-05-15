@@ -20,7 +20,7 @@ xml方式
 		<!-- 注入数据库连接池 -->
 		<property name="dataSource" ref="dataSource" />
 		<!-- 扫描model包，使用别名 -->
-		<property name="typeAliasesPackage" value="com.xxxx.xxxx.*.model,{color:#14892c}com.binz.tools.com.binz.tools.autoupdatetable.model{color}" />
+		<property name="typeAliasesPackage" value="com.xxxx.xxxx.*.model,{color:#14892c}com.github.gonglb.tools.autoupdatetable.model{color}" />
 		<!-- 扫描sql配置文件：mapper接口需要的xml文件 -->
 		<property name="mapperLocations">
 			<list>
@@ -45,7 +45,7 @@ xml方式
 		sqlSessionFactoryBean.setConfigLocation(resolver.getResource("classpath:mybatis-setting.xml"));
 	{color:#14892c}	Resource[] resources = resolver.getResources("classpath*:mapper/*Mapper.xml");
 		sqlSessionFactoryBean.setMapperLocations(resources);{color}
-		sqlSessionFactoryBean.setTypeHandlersPackage("com.xxx.xxx.*.model,{color:#14892c}com.binz.tools.com.binz.tools.autoupdatetable.model{color}");
+		sqlSessionFactoryBean.setTypeHandlersPackage("com.xxx.xxx.*.model,{color:#14892c}com.github.gonglb.tools.autoupdatetable.model{color}");
 		return sqlSessionFactoryBean.getObject();
 	}
 {code}
@@ -56,7 +56,7 @@ xml方式
 
 {code:xml}
 <!-- mapper接口扫描 -->
-	<bean class="com.binz.tools.com.binz.tools.autoupdatetable.entrance.AutoTableTKMapperScannerConfigurer">
+	<bean class="com.github.gonglb.tools.autoupdatetable.entrance.AutoTableTKMapperScannerConfigurer">
 		<property name="basePackage" value="com.xxxx.xxxx.*.mapper" />
 		<property name="properties">
 			<value>
@@ -99,7 +99,7 @@ xml方式
 {code:java}
 import org.apache.ibatis.type.JdbcType;
 
-import com.binz.tools.com.binz.tools.autoupdatetable.common.ColumnType;
+import com.github.gonglb.tools.autoupdatetable.common.ColumnType;
 @Table(name = "t_test")
 public class Test{
 
