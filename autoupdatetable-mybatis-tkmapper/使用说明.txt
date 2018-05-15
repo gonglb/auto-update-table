@@ -1,0 +1,88 @@
+1、sqlSessionFactory配置
+typeAliasesPackage需要写上com.binz.tools.com.binz.tools.autoupdatetable.model
+mapperLocations需要写入classpath*:mapper/*.xml
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 注入数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 扫描model包，使用别名 com.binz.tools.com.binz.tools.autoupdatetable.model必须 -->
+		<property name="typeAliasesPackage" value="com.xxx.xxx.*.model,com.binz.tools.com.binz.tools.autoupdatetable.model" />
+		<!-- 扫描sql配置文件：mapper接口需要的xml文件 -->
+		<property name="mapperLocations">
+			<list>
+				<value>classpath*:mapper/*.xml</value>
+				<value>classpath*:xxxx/*.xml</value>
+			</list>
+		</property>
+		<!-- mybatis分页插件 -->
+		<property name="configLocation" value="classpath:spring/applicationContext-mybatis.xml" />
+</bean>
+
+2、mybatis配置
+packs:需要自动更新表结构的包路径，
+tableAuto:create（全部重建）,update（更新与数据不一致）,none(不做操作)
+<bean class="com.binz.tools.com.binz.tools.autoupdatetable.entrance.AutoTableTKMapperScannerConfigurer">
+		<property name="basePackage" value="com.xxx.xxx.*.mapper" />
+		<property name="properties">
+			<value>
+				mappers=tk.mybatis.mapper.common.Mapper,tk.mybatis.mapper.common.special.InsertListMapper
+			</value>
+		</property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+		
+		
+		<property name="packs" value="com.xxx.xxx.xxx.model,com.xxx.xxx.xxxx.model"/>
+		<property name="tableAuto" value="update"/>
+</bean>
+
+3、定义实体
+Column的注解：
+	columnDefinition：此处使用为注释
+	table：此处使用为默认值
+类型的定义具体查看源码AutoTableHandle.tableFieldsConstruct()
+length 尽量别定义255
+@Table(name= "t_aatext")
+public class Text {
+	
+	@Id  //指明主键
+	@GeneratedValue(strategy= GenerationType.IDENTITY) //tkmapper需要使用，没用使用tkmapper忽略
+	@Column(name="text_id",columnDefinition="Idadadsf" ,length = 10)  //字段定义
+	@ColumnType(jdbcType = JdbcType.INTEGER)  //字段类型
+	private Integer textId;
+	
+	@Column(name="id",columnDefinition="id" ,length = 11)
+	@ColumnType(jdbcType = JdbcType.INTEGER)
+	private Integer id;
+	
+	@Column(name="text_title",columnDefinition="注释asdfadsf",table="默认值adfadf" ,length = 256)
+	@ColumnType(jdbcType = JdbcType.VARCHAR)
+	private String textTitle;
+	
+	//LONGVARCHAR 会转为 text类型
+	@Column(columnDefinition="内容asdasdf")
+	@ColumnType(jdbcType = JdbcType.LONGVARCHAR)
+	private String textContent;
+	
+	//没有指定name、会自动使用下划线
+	@Column(columnDefinition="置顶asdfadfs",table="0",length=1)
+	@ColumnType(jdbcType = JdbcType.TINYINT)
+	private Boolean textTop;
+	
+	@Column(columnDefinition="金额asdfadf",table="0.000",scale=3,length=16)
+	@ColumnType(jdbcType = JdbcType.DECIMAL)
+	private Double textAmount;
+}
+
+4、maven引用
+
+<dependency>
+		<groupId>tk.mybatis</groupId>
+		<artifactId>mapper</artifactId>
+		<version>3.4.6</version>
+</dependency>
+
+<dependency>
+	<groupId>com.binz.tools</groupId>
+	<artifactId>com.binz.tools.autoupdatetable</artifactId>
+	<version>0.0.1</version>
+</dependency>
+
