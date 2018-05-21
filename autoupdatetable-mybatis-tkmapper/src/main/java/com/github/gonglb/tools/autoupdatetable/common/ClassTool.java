@@ -32,11 +32,9 @@ public class ClassTool extends ClassUtils{
     
     /**
      * 获取类注解
-     *
-     * @param clazz
-     *            类
-     * @param annotationClass
-     *            注解类
+     * @param <A> object
+     * @param clazz  类
+     * @param annotationClass 注解类
      * @return a A object.
      */
     public static <A extends Annotation> A getClassAnnotation(Class<?> clazz, Class<A> annotationClass) {
@@ -144,14 +142,11 @@ public class ClassTool extends ClassUtils{
     /**
      * 以文件的形式来获取包下的所有Class
      *
-     * @param packageName
-     *            a {@link java.lang.String} object.
-     * @param packagePath
-     *            a {@link java.lang.String} object.
-     * @param recursive
-     *            a boolean.
-     * @param classes
-     *            a {@link java.util.Set} object.
+     * @param packageName a {@link java.lang.String} object.
+     * @param packagePath a {@link java.lang.String} object.
+     * @param recursive a boolean.
+     * @param classes a {@link java.util.Set} object.
+     * @param annotationClass 注解class
      */
     public static void findAndAddClassesInPackageByFile(String packageName,
             String packagePath, final boolean recursive, Set<Class<?>> classes, Class<? extends Annotation> annotationClass) {

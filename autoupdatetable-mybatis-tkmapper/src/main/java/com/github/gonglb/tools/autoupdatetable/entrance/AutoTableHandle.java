@@ -21,7 +21,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.gonglb.tools.autoupdatetable.common.ClassTool;
 import com.github.gonglb.tools.autoupdatetable.common.ColumnType;
 import com.github.gonglb.tools.autoupdatetable.mapper.CreateMysqlTablesMapper;
@@ -725,9 +724,8 @@ public class AutoTableHandle {
 
 	/**
 	 * 驼峰转下划线
-	 * @param object
-	 * @return
-	 * @throws JsonProcessingException
+	 * @param line 驼峰字符串
+	 * @return 下划线字符串
 	 */
 	public static String camel2Underline(String line){
 		if(line==null||"".equals(line)){

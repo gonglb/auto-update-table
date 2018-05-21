@@ -74,8 +74,8 @@ public interface CreateMysqlTablesMapper extends Mapper<SysMysqlColumns>{
 	
 	/**
 	 * 根据表名获取sql
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return 获取创建表的sql
 	 */
 	public String getSqlByTableName(@Param("tableName") String tableName);
 }
