@@ -59,7 +59,7 @@
 	</select>
 	
 	<!-- 根据表名查询表的结构 -->
-	<select id="findTableEnsembleByTableName" resultType="com.binz.tools.com.binz.tools.autoupdatetable.model.SysMysqlColumns" parameterType="String">
+	<select id="findTableEnsembleByTableName" resultType="com.github.gonglb.tools.autoupdatetable.model.SysMysqlColumns" parameterType="String">
 		select * from information_schema.columns where table_name = #{tableName} and table_schema = (select database())
 	</select>
 	

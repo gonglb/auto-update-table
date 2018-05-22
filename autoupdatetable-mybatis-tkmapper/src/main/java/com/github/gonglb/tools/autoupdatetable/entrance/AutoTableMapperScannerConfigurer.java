@@ -63,5 +63,11 @@ public class AutoTableMapperScannerConfigurer extends org.mybatis.spring.mapper.
 	public void setTableAuto(String tableAuto) {
 		this.tableAuto = tableAuto;
 	}
+	
+	@Override
+	public void setBasePackage(String basePackage) {
+		basePackage+=",com.github.gonglb.tools.autoupdatetable.mapper";
+		super.setBasePackage(basePackage);
+	}
 
 }

@@ -65,7 +65,7 @@ public class AutoTableTKMapperScannerConfigurer extends tk.mybatis.spring.mapper
 	
 	@Override
 	public void setBasePackage(String basePackage) {
-		basePackage+=",com.binz.tools.com.binz.tools.autoupdatetable.mapper";
+		basePackage+=",com.github.gonglb.tools.autoupdatetable.mapper";
 		super.setBasePackage(basePackage);
 	}
 
