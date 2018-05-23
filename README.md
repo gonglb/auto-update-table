@@ -115,13 +115,14 @@ public class Test{
     private String testTitle;
 
 	//跟数据库无关的字段
-	@Transient
+	@Transient	
 	private Boolean testOther;
 }
 
 ```
 
-附带自动生成java model 和sql http://47.98.124.10:8088/love-web//html/java/java-model-generate.html
+附带自动生成java model 和sql 
+<a href="http://47.98.124.10:8088/love-web//html/java/java-model-generate.html" target="_blank">http://47.98.124.10:8088/love-web//html/java/java-model-generate.html</a>
 4、注意事项
 a、该项目根据 mybatis-enhance-actable-0.0.1 开源项目的思路改编而来
 b、该项目会自动删除更新表结构，根据实际情况使用
