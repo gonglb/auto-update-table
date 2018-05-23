@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,8 @@ public class AutoTableHandle {
 	private static final Logger log = LoggerFactory.getLogger(AutoTableHandle.class);
 
 	private CreateMysqlTablesMapper createMysqlTablesMapper;
+
+	private static final int VARCHAR_DEFAULT_LENGTH=255;
 
 	/**
 	 * 要扫描的model所在的packs，逗号分隔
@@ -69,27 +72,28 @@ public class AutoTableHandle {
 			return ;
 		}
 		isUpdate =true;
-		// 用于存需要创建的表名+结构
-		Map<String, List<Object>> newTableMap = new HashMap<String, List<Object>>();
-
-		// 用于存需要更新字段类型等的表名+结构
-		Map<String, List<Object>> modifyTableMap = new HashMap<String, List<Object>>();
-
-		// 用于存需要增加字段的表名+结构
-		Map<String, List<Object>> addTableMap = new HashMap<String, List<Object>>();
-
-		// 用于存需要删除字段的表名+结构
-		Map<String, List<Object>> removeTableMap = new HashMap<String, List<Object>>();
-
-		// 用于存需要删除主键的表名+结构
-		Map<String, List<Object>> dropKeyTableMap = new HashMap<String, List<Object>>();
-
-		// 用于存需要删除唯一约束的表名+结构
-		Map<String, List<Object>> dropUniqueTableMap = new HashMap<String, List<Object>>();
-
 		String [] packArr = packs.split(",");
 		Set<Class<?>> classes ;
 		for (String pack : packArr) {
+			// 用于存需要创建的表名+结构
+			Map<String, List<Object>> newTableMap = new HashMap<String, List<Object>>();
+
+			// 用于存需要更新字段类型等的表名+结构
+			Map<String, List<Object>> modifyTableMap = new HashMap<String, List<Object>>();
+
+			// 用于存需要增加字段的表名+结构
+			Map<String, List<Object>> addTableMap = new HashMap<String, List<Object>>();
+
+			// 用于存需要删除字段的表名+结构
+			Map<String, List<Object>> removeTableMap = new HashMap<String, List<Object>>();
+
+			// 用于存需要删除主键的表名+结构
+			Map<String, List<Object>> dropKeyTableMap = new HashMap<String, List<Object>>();
+
+			// 用于存需要删除唯一约束的表名+结构
+			Map<String, List<Object>> dropUniqueTableMap = new HashMap<String, List<Object>>();
+			
+
 			// 从包package中获取所有的Class
 			classes = ClassTool.getClasses(pack, true, Table.class);
 
@@ -291,10 +295,7 @@ public class AutoTableHandle {
 				if ("PRI".equals(sysColumn.getColumnKey()) && !createTableParam.isFieldIsKey()) {
 					dropKeyFieldList.add(createTableParam);
 				}
-				
-				if("PRI".equals(sysColumn.getColumnKey()) && createTableParam.isFieldIsKey()) {
-					createTableParam.setFieldIsKey(false);//解决重复主键错误问题
-				}
+
 
 				// 原本是唯一，现在不是了，那么要去做删除唯一的操作
 				if ("UNI".equals(sysColumn.getColumnKey()) && !createTableParam.isFieldIsUnique()) {
@@ -341,7 +342,7 @@ public class AutoTableHandle {
 					modifyFieldList.add(createTableParam);
 					continue;
 				}
-				
+
 				// 6.验证默认值不同时
 				if (sysColumn.getColumnDefault() != null && !sysColumn.getColumnDefault().equals(createTableParam.getFieldDefaultValue())
 						||createTableParam.getFieldDefaultValue() !=null && !createTableParam.getFieldDefaultValue().equals(sysColumn.getColumnDefault())) {
@@ -372,8 +373,8 @@ public class AutoTableHandle {
 				}
 
 				//9.注释是否相同
-				if (sysColumn.getColumnComment() != null && !sysColumn.getColumnComment().equals(createTableParam.getFieldComment())
-						||createTableParam.getFieldComment() !=null && !createTableParam.getFieldComment().equals(sysColumn.getColumnComment())) {
+				if ( StringUtils.isNotBlank(sysColumn.getColumnComment()) && !sysColumn.getColumnComment().equals(createTableParam.getFieldComment())
+						||StringUtils.isNotBlank(createTableParam.getFieldComment()) && !createTableParam.getFieldComment().equals(sysColumn.getColumnComment())) {
 					modifyFieldList.add(createTableParam);
 					continue;
 				}
@@ -466,73 +467,149 @@ public class AutoTableHandle {
 
 		// 判断是否有父类，如果有拉取父类的field，这里只支持多层继承
 		fields = recursionParents(clas, fields);
-		String type;
 		boolean hasAnnotation;;
-		boolean hasId;
 		Column column;
 		ColumnType columnType;
 		CreateTableParam param;
-		int length = 0;
 		JdbcType jdbcType;
+		String fieldType;
+
+		String fieldName = null;
+		String type = "varchar";
+		int length;
+		int fieldDecimalLength;
+		boolean fieldIsNull=true;
+		boolean fieldIsKey =false;
+		boolean fieldIsAutoIncrement =false;
+		boolean fieldIsUnique = false;
+		String fieldComment = null;
+		String fieldDefaultValue = null;
 		for (Field field : fields) {
-			length = 0;
+			if(field.isAnnotationPresent(Transient.class)) {
+				continue;
+			}
 			// 判断方法中是否有指定注解类型的注解
 			hasAnnotation = field.isAnnotationPresent(Column.class);
-			hasId = field.isAnnotationPresent(Id.class);
-			if (hasAnnotation) {
-				// 根据注解类型返回方法的指定类型注解
-				column = field.getAnnotation(Column.class);
-				columnType = field.getAnnotation(ColumnType.class);
-				if(columnType ==null ) {
-					jdbcType = JdbcType.VARCHAR;
-				}else {
-					jdbcType = columnType.jdbcType();
+			jdbcType = null;
+
+			fieldName = null;
+			type = "varchar";
+			length = 0;
+			fieldDecimalLength=0;
+			fieldIsNull=true;
+			fieldIsKey =false;
+			fieldIsAutoIncrement =false;
+			fieldIsUnique = false;
+			fieldComment = null;
+			fieldDefaultValue = null;
+
+			fieldIsKey = field.isAnnotationPresent(Id.class);
+			fieldIsAutoIncrement = fieldIsKey;
+
+
+			// 根据注解类型返回方法的指定类型注解
+			columnType = field.getAnnotation(ColumnType.class);
+			if(columnType ==null ) {
+				fieldType = field.getType().getSimpleName();
+				switch (fieldType) {
+				case "String":
+					type=JdbcType.VARCHAR.name();
+					length = VARCHAR_DEFAULT_LENGTH;
+					break;
+				case "Integer":
+					type="int";
+					length = 11;
+					break;
+				case "Double":
+				case "Decimal":
+					type=JdbcType.DECIMAL.name();
+					length=16;
+					fieldDecimalLength = 3;
+					break;
+				case "Date":
+					type="datetime";
+					break;
+				case "Boolean":
+					type=JdbcType.TINYINT.name();
+					fieldDefaultValue = "0";
+					length=1;
+					break;
+
+				default:
+					type=JdbcType.VARCHAR.name();
+					length = VARCHAR_DEFAULT_LENGTH;
+					break;
 				}
-				param = new CreateTableParam();
-				param.setFieldName(column.name().equals("")?camel2Underline(field.getName()):column.name());
-				
+			}else {
+				jdbcType = columnType.jdbcType();
 				switch (jdbcType) {
 				case LONGVARCHAR:
 					type="text";
 					break;
 				case INTEGER:
 					type="int";
+					length = 11;
+					break;
+				case BIGINT:
+					length = 11;
+					break;
+				case TINYINT:
+					length = 1;
+					break;
+				case DECIMAL:
+				case DOUBLE:
+					length=16;
+					fieldDecimalLength = 3;
 					break;
 				case DATETIMEOFFSET:
 					type="datetime";
-				break;
+					break;
 				default:
 					type = jdbcType.name().toLowerCase();
 					break;
 				}
-				if(jdbcType != JdbcType.VARCHAR && column.length() == 255) {
-					length = 0;
-				}else {
+			}
+
+
+			if (hasAnnotation) {
+				column = field.getAnnotation(Column.class);
+				fieldName = column.name();
+				if(jdbcType ==JdbcType.VARCHAR || jdbcType != JdbcType.VARCHAR && column.length() != VARCHAR_DEFAULT_LENGTH) {
 					length = column.length();
 				}
 
 				//由于注解没用定义默认值属性，暂时使用table代替
-				param.setFieldDefaultValue(jdbcType != JdbcType.VARCHAR && StringUtils.isBlank(column.table())?null:column.table());
-				param.setFieldType(type);
-				param.setFieldLength(length);
-				param.setFieldDecimalLength(column.scale());
+				fieldDefaultValue = jdbcType != JdbcType.VARCHAR && StringUtils.isBlank(column.table())?null:column.table();
+				fieldDecimalLength = column.scale();
 				// 主键或唯一键时设置必须不为null
-				if (hasId || column.unique()) {
-					param.setFieldIsNull(false);
+				fieldIsUnique = column.unique();
+				if ( fieldIsKey || fieldIsUnique) {
+					fieldIsNull = false;
 				} else {
-					param.setFieldIsNull(column.nullable());
+					fieldIsNull = column.nullable();
 				}
-				param.setFieldIsKey(hasId);
-				param.setFieldIsAutoIncrement(hasId);
-				param.setFieldIsUnique(column.unique());
 
 				//由于注解没用定义注释属性，暂时使用columnDefinition代替
-				param.setFieldComment(StringUtils.isBlank(column.columnDefinition())?null:column.columnDefinition());
-
-				
-
-				newFieldList.add(param);
+				fieldComment = StringUtils.isBlank(column.columnDefinition())?null:column.columnDefinition();
 			}
+			if(StringUtils.isBlank(fieldName)) {
+				fieldName = camel2Underline(field.getName());
+			}
+			param = new CreateTableParam();
+
+			param.setFieldName(fieldName);
+			param.setFieldType(type);
+			param.setFieldLength(length);
+			param.setFieldComment(fieldComment);
+			param.setFieldDecimalLength(fieldDecimalLength);
+			param.setFieldDefaultValue(fieldDefaultValue);
+			param.setFieldIsAutoIncrement(fieldIsAutoIncrement);
+			param.setFieldIsKey(fieldIsKey);
+			param.setFieldIsNull(fieldIsKey?false:fieldIsNull);
+			param.setFieldIsUnique(fieldIsUnique);
+
+
+			newFieldList.add(param);
 		}
 	}
 
